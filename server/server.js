@@ -46,6 +46,54 @@ function userExists (username, ret) {
     });
 }
 
+function remove (id, region,ret) {
+    MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
+        if(!err) {
+            console.log("We are connected");
+            var collection = db.collection('Locations.Regions.'+region);
+            collection.remove({_id : id}, function(err, result){
+                ret(!err);
+            });
+        }
+    });
+}
+
+function insertIntoUsers(username, id, Visited, ret){
+    MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
+        if(!err) {
+            var collection = db.collection('Users');
+            collection.insert({Username : username}, {$addToSet : {'Visited' : Visited}}, function(err, result){
+            });
+            collection.insert({Username : username}, {$addToSet : {'PlacesCurrentlyClaimed' : id}}, function(err, result){
+            });
+        }
+    });
+}
+
+function insertIntoLocation (region, record, ret) {
+    MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
+        if(!err) {
+            var collection = db.collection('Locations.Regions.'+region);
+            collection.insert(record, function(err, result){
+                db.close();
+                ret(result[0]._id);
+            });
+        }
+    });
+}  
+
+function removeByUsername (id, username,ret) {
+    MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
+        if(!err) {
+            console.log("We are connected");
+            var collection = db.collection('Locations.Regions.'+region);
+            collection.update({Username : username}, {$pullAll : {'PlacesCurrentlyClaimed' : [id]}},function(err, item){
+                ret(!err);
+            });
+        }
+    });
+}
+
 function checkLocation (clat, clong, region, ret) {
     MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
         if(!err) {
@@ -90,6 +138,8 @@ app.post('/pictureCapture', function(req, res){
     res.statusCode = 200;
     var lat = req.body.latitude;
     var long = req.body.longitude;
+    var username = req.body.username;
+    var pic = req.body.picture;
     getCity(lat, long, function(region){
         console.log(region);
         if (region == null){ // Handle this case
@@ -97,19 +147,44 @@ app.post('/pictureCapture', function(req, res){
         }
         else {
             checkLocation(lat, long, region, function(currentCapture){
-                if (currentCapture == null){
-                    // Enter it into the locations table as this USERS shit
-                    // Enter it into BOTH the Users.VisitedPlaces and Users.CurrentPlaces
+                if (currentCapture != null){ // Do this call and the next call concurrently!!!!!! (They do NOT conflict)
+                    remove(currentCapture._id, region, function(success){
+                        if (!success) console.log("Removing the old dude from Locations.Regions.region didn't go too well");
+                    });
+                    removeByUsername(currentCapture._id, currentCapture.Username, function(success){
+                       if (!success) console.log("Removing the old dudes PlacesCurrentlyClaimed value didn't go too well ;c"); 
+                    });
+                    
                 }
-                else {
-                    // Pop out the old guy from Loccations.Regions
-                    // Pop out the location from the current places
-                    // Enter it into BOTH the Users.VisitedPlaces and Users.CurrentPlaces   
-                    // Enter it into the locations table as this USERS shit
-                }
+                var JSON_DOC = {
+                    Username : username,
+                    Visited  : {
+                        picture : pic, 
+                        location : [lat, long],
+                        worth : 1
+                    }
+                };
+                insertIntoLocation(region,JSON_DOC, function(id){
+                    Visited  : {
+                        picture : pic, 
+                        location : [lat, long],
+                        worth : 1
+                    }
+                    insertIntoUsers(username, id, Visited, function(result){
+                    });
+                });
             });
         }
     });
+    res.end();
+});
+
+app.post('/pictureCapture', function(req, res){
+    res.statusCode = 200;
+    var lat = req.body.latitude;
+    var long = req.body.longitude;
+    var username = req.body.username;
+    var pic = req.body.picture;
     res.end();
 });
 
