@@ -3,6 +3,8 @@ package uofthacks2015.selfer.selfer;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.location.Criteria;
 import android.view.Menu;
@@ -15,8 +17,43 @@ import android.location.LocationManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.widget.ListView;
-import android.widget.ListAdapter;
+import android.content.Context;
+import android.widget.ArrayAdapter;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
+
+
+class MySimpleArrayAdapter extends ArrayAdapter<Selfie> {
+    // private final Context context;
+    private final ArrayList <Selfie> values;
+    Context context;
+
+
+    public MySimpleArrayAdapter(Context context, ArrayList <Selfie> values) {
+        super(context, R.layout.row, values);
+        this.context = context;
+        this.values = values;
+
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View rowView = inflater.inflate(R.layout.row, parent, false);
+
+        TextView name = (TextView) rowView.findViewById(R.id.User);
+        name.setText(values.get(position).getName()+"\nDistance: "+values.get(position).getDist()+" Worth: "+values.get(position).getPoints()+"pts");
+
+        ImageView pic = (ImageView) rowView.findViewById(R.id.userPic);
+        pic.setImageBitmap(values.get(position).getPic());
+
+
+        return rowView;
+    }
+}
 
 
 public class MainActivity extends ActionBarActivity implements LocationListener{
@@ -59,10 +96,8 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
 
         lv = (ListView) findViewById(R.id.listView);
 
-        ListAdapter adapter = new ListAdapter(this, R.layout.row, selfieList);
-
+        ListAdapter adapter = new MySimpleArrayAdapter(this, selfieList);
         lv.setAdapter(adapter);
-
 
         locationMan = (LocationManager) getSystemService(this.LOCATION_SERVICE);
 
@@ -130,9 +165,17 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            Selfie newSelfie = new Selfie(username, latitude, longitude, imageBitmap);
+            Selfie newSelfie = new Selfie(username, latitude, longitude, imageBitmap, 1);
+
+            updateListView();
             // TODO send this selfie to the sever and then get the list back.
+            selfieList.add(newSelfie);
         }
+    }
+
+    public void updateListView(){
+        ListAdapter adapter = new MySimpleArrayAdapter(this, selfieList);
+        lv.setAdapter(adapter);
     }
 
     @Override

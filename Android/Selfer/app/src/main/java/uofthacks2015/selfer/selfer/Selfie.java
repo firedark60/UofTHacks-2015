@@ -7,12 +7,18 @@ public class Selfie {
     private double latitude;
     private double longitude;
     private Bitmap pic;
+    private int points;
 
-    public Selfie(String name, double latitude, double longitude, Bitmap pic){
+    public Selfie(String name, double latitude, double longitude, Bitmap pic, int points){
             this.name = name;
             this.latitude = latitude;
             this.longitude = longitude;
             this.pic = pic;
+            this.points = points;
+    }
+
+    public int getDist(){
+        return 420; // TODO placeholder.
     }
 
     public String getName(){
@@ -29,6 +35,10 @@ public class Selfie {
 
     public Bitmap getPic(){
         return this.pic;
+    }
+
+    public int getPoints(){
+        return this.points;
     }
 
 }
