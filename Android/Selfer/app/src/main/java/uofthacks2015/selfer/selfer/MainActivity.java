@@ -320,9 +320,6 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
                 // TODO Internet screwed up.
             }
             updateListView();
-
-
-            updateListView();
         }
     }
 
