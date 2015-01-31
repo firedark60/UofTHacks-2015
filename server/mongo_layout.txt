@@ -24,6 +24,29 @@ Visited {
 
 ]
 
+PlacesCurrentlyClaimed [
+
+id : string
+
+]
+
 Points : Integer
 
 Achievements : [Strings..]
+
+
+--------------------
+
+Locations.Regions.[province]
+
+Ontario : 
+
+{
+
+id : generated
+	
+username : string
+
+Visited Object
+
+}
