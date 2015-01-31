@@ -46,11 +46,11 @@ function userExists (username, ret) {
     });
 }
 
-function checkLocation (lat, long, region, ret) {
+function checkLocation (clat, clong, region, ret) {
     MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
         if(!err) {
             var collection = db.collection('Locations.Regions.'+region);
-            collection.find( {}, { Username: 1, Location: 1 }).toArray(function(err, docs) {
+            collection.find( {}, { Username: 1, Visited: 1}).toArray(function(err, docs) {
 
                 var len = docs.length;
                 if (len === 0 ){
@@ -58,13 +58,19 @@ function checkLocation (lat, long, region, ret) {
                 }
                 else {
                     for (var i = 0; i < len; i++){
-                        console.log(docs[i]);
+                        VisitedRegionObject = docs[i].Visited;
+                        if (measure(clat, clong, VisitedRegionObject.location[0], VisitedRegionObject.location[1]) < RADIUS){
+                            ret(docs[i]);
+                        }
+                        else ret(null);
                     }
                 }
             });
         }
     });
 }
+
+
 
 function getCity(lat, long, ret ){
     geocoder.reverseGeocode( lat, long, function ( err, data ) {
@@ -105,4 +111,10 @@ app.post('/pictureCapture', function(req, res){
         }
     });
     res.end();
+});
+
+checkLocation(45,45, 'TO', function(result){
+    console.log(result._id);
+    console.log(result.Username);
+    console.log(result.Visited);
 });
