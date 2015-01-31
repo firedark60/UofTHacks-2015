@@ -1,1 +1,55 @@
-/* CSS declarations go here */
+body {
+  background-color: #EEF3F6;
+}
+
+nav#header {
+  background-color: #303B54;
+  padding: 0 50px;
+}
+
+#header h1 {
+  font-size: 32px;
+  color: #fff;
+  font-weight: 100;
+}
+
+#header h1 small {
+  font-size: 10px;
+  color: rgba(255,255,255,0.5);
+  position: relative;
+  left: -5px;
+}
+
+#hero {
+  padding: 120px 50px;
+  background-color: #01A9F4;
+  color: #fff;
+}
+
+#hero h1 {
+  padding: 0;
+  margin: 0;
+  font-weight: 100;
+  font-size: 42px;
+}
+
+#hero h2 {
+  padding: 15px 0;
+  margin: 0;
+  font-weight: 100;
+  font-size: 22px;
+}
+
+#container {
+  background-color: #fff;
+  width: 90%;
+  margin: auto;
+  margin-top: 40px;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+
+#container h1 {
+  font-weight: 400;
+}

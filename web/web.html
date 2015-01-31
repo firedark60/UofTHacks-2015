@@ -3,12 +3,34 @@
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
+  <nav id="header">
+    <div class="pure-g">
+        <div class="pure-u-1">
+          <h1>Selfer <small>ALPHA</small></h1>
+        </div>
+    </div>
+  </nav>
 
-  {{> hello}}
+  <nav id="hero">
+    <div class="pure-g">
+        <div class="pure-u-1">
+          <h1>Tagline goes here</h1>
+          <h2>Some more text goes here.</h2>
+        </div>
+    </div>
+  </nav>
+
+  <div id="container">
+    {{> hello}}
+  </div>
 </body>
 
 <template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+  <div class="pure-g">
+    <div class="pure-u-1">
+      <h1>Heading Text</h1>
+      <button>Click Me</button>
+      <p>You've pressed the button {{counter}} times.</p>
+    </div>
+  </div>
 </template>
