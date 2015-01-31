@@ -62,9 +62,9 @@ function insertIntoUsers(username, id, Visited, ret){
     MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
         if(!err) {
             var collection = db.collection('Users');
-            collection.insert({Username : username}, {$addToSet : {'Visited' : Visited}}, function(err, result){
+            collection.update({Username : username}, {$addToSet : {'Visited' : Visited}}, function(err, result){
             });
-            collection.insert({Username : username}, {$addToSet : {'PlacesCurrentlyClaimed' : id}}, function(err, result){
+            collection.update({Username : username}, {$addToSet : {'PlacesCurrentlyClaimed' : id}}, function(err, result){
             });
         }
     });
@@ -82,7 +82,7 @@ function insertIntoLocation (region, record, ret) {
     });
 }  
 
-function removeByUsername (id, username,ret) {
+function removeByUsername (id, username, region,ret) {
     MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
         if(!err) {
             console.log("We are connected");
@@ -93,6 +93,41 @@ function removeByUsername (id, username,ret) {
         }
     });
 }
+
+function getNearestTargets(lat, long, region, ret){
+    MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
+        if(!err) {
+            var collection = db.collection('Locations.Regions.'+region);
+            collection.find( {}, { Username: 1, Visited: 1}).toArray(function(err, docs) {
+                var len = docs.length;
+                if (len === 0 ){
+                    ret(null);
+                }
+                else {
+                    var returnList = [];
+                    var container = {};
+                    var retContainer = {};
+                    for (var i = 0; i < len; i++){
+                        VisitedRegionObject = docs[i].Visited;
+                        dist = measure(lat, long, VisitedRegionObject.location[0], VisitedRegionObject.location[1]);
+                        returnList.push(dist);
+                        container[dist] = docs[i];
+                    }
+                    returnList.sort();
+                    max = returnList.length > 6 ? 6 : returnList.length;
+                    returnList = returnList.slice(0, max);
+
+                    for (var i = 0; i < max; i++){
+                        retContainer[returnList[i]] = container[returnList[i]];
+                    }
+                    ret(retContainer);
+                }
+            });
+        }
+    });
+}
+
+
 
 function checkLocation (clat, clong, region, ret) {
     MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
@@ -132,14 +167,43 @@ function getCity(lat, long, ret ){
 }
 
 
-
+app.post('/updateNearest', function(req, res){
+    res.statusCode = 200;
+    req.body = (req.body.body.split(","));
+    console.log(req.body);
+    var latString = (req.body[0].split(":")[1]);
+    var lat = parseFloat(latString.substring(1, latString.length-1));
+    var longString = (req.body[1].split(":")[1]);
+    var long = parseFloat(longString.substring(1, longString.length-1));
+    console.log(lat);
+    console.log(long);
+    getCity(lat, long, function(region){
+        getNearestTargets(lat, long, region, function(dict){
+            returnStringWithInfoOnEverything = JSON.stringify(dict);
+            console.log(returnStringWithInfoOnEverything);
+            res.write(returnStringWithInfoOnEverything);
+            res.end();
+        });
+    });
+    
+});
 
 app.post('/pictureCapture', function(req, res){
     res.statusCode = 200;
-    var lat = req.body.latitude;
-    var long = req.body.longitude;
-    var username = req.body.username;
-    var pic = req.body.picture;
+    req.body = (req.body.body.split(","));
+    console.log(req.body);
+    var latString = (req.body[0].split(":")[1]);
+    var lat = parseFloat(latString.substring(1, latString.length-1));
+    var longString = (req.body[1].split(":")[1]);
+    var long = parseFloat(longString.substring(1, longString.length-1));
+    var usernameString = (req.body[2].split(":")[1]);
+    var username = (usernameString.substring(1, usernameString.length-1));
+    var pictureString = (req.body[3].split(":")[1]);
+    var pic = (pictureString.substring(1, pictureString.length-1));
+    console.log(lat);
+    console.log(long);
+    console.log(username);
+    console.log(pic);
     getCity(lat, long, function(region){
         console.log(region);
         if (region == null){ // Handle this case
@@ -151,7 +215,7 @@ app.post('/pictureCapture', function(req, res){
                     remove(currentCapture._id, region, function(success){
                         if (!success) console.log("Removing the old dude from Locations.Regions.region didn't go too well");
                     });
-                    removeByUsername(currentCapture._id, currentCapture.Username, function(success){
+                    removeByUsername(currentCapture._id, currentCapture.Username, region,function(success){
                        if (!success) console.log("Removing the old dudes PlacesCurrentlyClaimed value didn't go too well ;c"); 
                     });
                     
@@ -165,11 +229,11 @@ app.post('/pictureCapture', function(req, res){
                     }
                 };
                 insertIntoLocation(region,JSON_DOC, function(id){
-                    Visited  : {
+                    Visited  = {
                         picture : pic, 
                         location : [lat, long],
                         worth : 1
-                    }
+                    };
                     insertIntoUsers(username, id, Visited, function(result){
                     });
                 });
@@ -179,14 +243,6 @@ app.post('/pictureCapture', function(req, res){
     res.end();
 });
 
-app.post('/pictureCapture', function(req, res){
-    res.statusCode = 200;
-    var lat = req.body.latitude;
-    var long = req.body.longitude;
-    var username = req.body.username;
-    var pic = req.body.picture;
-    res.end();
-});
 
 checkLocation(45,45, 'TO', function(result){
     console.log(result._id);
