@@ -17,3 +17,19 @@ var socketRooms = {};
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 server.listen(3000);
+
+RADIUS = 5;
+
+function userExists (username, ret) {
+    MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
+        if(!err) {
+            var collection = db.collection('Users');
+            collection.findOne({Username : username}, function(err, item){
+                if (item)
+                    ret(1);
+                else ret(0);
+            });
+        }
+    });
+}
+
