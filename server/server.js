@@ -33,6 +33,20 @@ function measure(lat1, lon1, lat2, lon2){  // generally used geo measurement fun
     return d * 1000; // meters
 }
 
+function readByUsername (username, ret) {
+    MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
+        if(!err) {
+            console.log("We are connected");
+            var collection = db.collection('Users');
+            collection.findOne({Username : username}, function(err, item){
+                if (!err)
+                ret(item);
+                else ret(null);
+            });
+        }
+    });
+}
+
 function userExists (username, ret) {
     MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
         if(!err) {
@@ -166,6 +180,32 @@ function getCity(lat, long, ret ){
     });
 }
 
+app.post('/login', function(req, res){
+    console.log(req.body);
+    var username = req.body.username;
+    userExists (username, function(result){
+        if (result === 1){
+            readByUsername(username, function(result){
+                if (result != null){  
+                    console.log(result.password);
+                    console.log(req.body.password);
+                    if (result.password == req.body.password){
+                        req.session.user = username;    
+                        //req.session.userDetails = result;
+                        res.statusCode = 200;
+                        console.log("you're in");
+                        res.redirect("/main.html");
+                    }
+                }
+                else {
+                    res.statusCode = 204;
+                    res.redirect("/login.html");
+                }
+            });
+        }
+        else res.redirect("/login.html");
+    });
+});
 
 app.post('/updateNearest', function(req, res){
     res.statusCode = 200;
