@@ -31,6 +31,19 @@
         android:scaleType="centerInside"
         android:onClick="takePic"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_toRightOf="@+id/imageButton"
+        android:layout_alignRight="@+id/listView"
+        android:layout_alignEnd="@+id/listView" />
+
+    <ImageButton
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:id="@+id/imageButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="goToMap"
+        android:src="@drawable/pin"
+        android:scaleType="centerInside" />
 
 </RelativeLayout>
