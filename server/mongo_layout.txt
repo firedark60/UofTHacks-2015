@@ -1,0 +1,23 @@
+name : Selfer
+
+collection : Users
+
+Users Properties :
+
+Username : String
+
+Lastname : String
+
+FirstName : String
+
+LastName : String
+
+Visited {
+	picture : <actual picture>	
+	location : [lat, long]
+	worth : integer
+}
+
+Points : Integer
+
+Achievements : [Strings..]
