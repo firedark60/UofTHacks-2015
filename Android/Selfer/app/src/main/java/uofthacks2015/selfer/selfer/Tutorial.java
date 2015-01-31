@@ -13,6 +13,7 @@ public class Tutorial extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
+        // TODO check if the user's phone has a camera and bitch at them if it doesn't.
     }
 
     public void getStarted(View view){
