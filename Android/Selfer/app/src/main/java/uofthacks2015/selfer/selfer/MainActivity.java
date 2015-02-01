@@ -64,7 +64,7 @@ class MySimpleArrayAdapter extends ArrayAdapter<Selfie> {
         View rowView = inflater.inflate(R.layout.row, parent, false);
 
         TextView name = (TextView) rowView.findViewById(R.id.User);
-        name.setText(values.get(position).getName()+"\nDistance: "+values.get(position).getDist()+" Worth: "+values.get(position).getPoints()+"pts");
+        name.setText(values.get(position).getName()+"\nDistance: "+values.get(position).getDist()+"m Worth: "+values.get(position).getPoints()+"pts");
 
         ImageView pic = (ImageView) rowView.findViewById(R.id.userPic);
         pic.setImageBitmap(values.get(position).getPic());
@@ -79,6 +79,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
     public static String PICTURE_CAP_URL = "http://85babfa.ngrok.com/pictureCapture";
     public static String PICTURE_GET_URL = "http://85babfa.ngrok.com/updateNearest";
     public static int MAX_TRIES = 500;
+    public static String username = "Anonymous";
 
     LocationManager locationMan;
     ListView lv;
@@ -86,8 +87,8 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
     public static boolean done = false;
 
     // The current users information.
-    public static String username = "Hunter Forsyth";
     public static int points = 0;
+    public static int temp = 0;
     public static double latitude = 0;
     public static double longitude = 0;
 
@@ -117,6 +118,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
     }
 
     public ArrayList<Selfie> getSelfies(){
+        temp = 0;
         ArrayList<Selfie> selfs = new ArrayList<Selfie>();
 
         HttpClient httpClient = new DefaultHttpClient();
@@ -132,14 +134,17 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
             BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 
             String json;
-            while ((json = reader.readLine()) != null) {
+            if ((json = reader.readLine()) != null) {
 
                 JSONObject obj = new JSONObject(json);
                 Iterator iterator = obj.keys();
-
+                int i = 0;
                 while (iterator.hasNext()) {
+
                     JSONObject object1 = new JSONObject();
-                    object1 = new JSONObject(obj.getString(iterator.next().toString()));
+                    String itobj = iterator.next().toString();
+                    object1 = new JSONObject(obj.getString(itobj));
+                    int dist = (int) (Double.parseDouble(itobj));
                     String usr = object1.getString("Username");
                     JSONObject visited = new JSONObject(object1.getString("Visited"));
                     String picture = visited.getString("picture");
@@ -152,8 +157,15 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
                     byte[] decodedString = Base64.decode(picture, Base64.URL_SAFE);
                     Bitmap decoded = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
-                    selfs.add(new Selfie(usr, Double.parseDouble(lat), Double.parseDouble(longd), decoded,
-                            Integer.parseInt(worth)));
+                    Selfie self = new Selfie(usr, Double.parseDouble(lat), Double.parseDouble(longd), decoded,
+                            Integer.parseInt(worth));
+                    self.setDist(dist);
+                    if (i == 0){
+                        temp = Integer.parseInt(worth);
+                    } // FIXME this is hacky.
+                    i ++;
+
+                    selfs.add(self);
                 }
 
 
@@ -197,7 +209,6 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
             request.setEntity(params);
             HttpResponse response = httpClient.execute(request);
 
-            points++; // TODO points should be handled by the sever.
             updatePoints();
             // handle response here...
         }catch (Exception ex) {
@@ -206,7 +217,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
-
+        points += temp;
         done = true;
 
     }
@@ -216,6 +227,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Selfer");
+
 
         TextView unameView = (TextView)findViewById(R.id.user);
         unameView.setText(username+"\n"+Integer.toString(points)+" pts.");
@@ -230,6 +242,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         Criteria criteria = new Criteria();
         String provider = locationMan.getBestProvider(criteria, false);
         Location location = locationMan.getLastKnownLocation(provider);
+
 
 
         // Initialize the location fields
@@ -255,7 +268,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         while (!done || tries < MAX_TRIES && (latitude == 0 || longitude == 0)){
             tries++;
         }
-        if (!done){
+        if (!done) {
             // TODO Internet screwed up.
         }
         updateListView();
@@ -305,28 +318,24 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
             if (!done){
                 // TODO Internet screwed up.
             }
-
+            try {
+                thread.sleep(200);
+            } catch (Exception e){
+                // TODO
+            }
             done = false;
-            Thread thread2 = new Thread(){
-                public void run(){
-                    selfieList = getSelfies(); // TODO
-                }
-            };
-            thread2.start();
-            tries = 0;
-            while (!done || tries < MAX_TRIES && (latitude == 0 || longitude == 0)){
-                tries++;
-            }
-            if (!done){
-                // TODO Internet screwed up.
-            }
-            updateListView();
+
+            this.recreate();
+
         }
     }
 
     public void updateListView(){
+        lv = (ListView) findViewById(R.id.listView);
+
         ListAdapter adapter = new MySimpleArrayAdapter(this, selfieList);
         lv.setAdapter(adapter);
+
     }
 
     @Override
