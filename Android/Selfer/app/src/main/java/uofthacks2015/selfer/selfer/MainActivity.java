@@ -136,25 +136,27 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
 
                 JSONObject obj = new JSONObject(json);
                 Iterator iterator = obj.keys();
-                JSONObject object1 = new JSONObject();
-                if (iterator.hasNext()) {
+
+                while (iterator.hasNext()) {
+                    JSONObject object1 = new JSONObject();
                     object1 = new JSONObject(obj.getString(iterator.next().toString()));
+                    String usr = object1.getString("Username");
+                    JSONObject visited = new JSONObject(object1.getString("Visited"));
+                    String picture = visited.getString("picture");
+                    JSONArray coord = visited.getJSONArray("location");
+                    String lat = coord.getString(0);
+                    String longd = coord.getString(1);
+                    String worth = visited.getString("worth");
+                    // Log.i("net", "user: "+usr+" lat: "+lat+" long: "+longd+" worth: "+worth);
+
+                    byte[] decodedString = Base64.decode(picture, Base64.URL_SAFE);
+                    Bitmap decoded = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                    selfs.add(new Selfie(usr, Double.parseDouble(lat), Double.parseDouble(longd), decoded,
+                            Integer.parseInt(worth)));
                 }
 
-                String usr = object1.getString("Username");
-                JSONObject visited = new JSONObject(object1.getString("Visited"));
-                String picture = visited.getString("picture");
-                JSONArray coord = visited.getJSONArray("location");
-                String lat = coord.getString(0);
-                String longd = coord.getString(1);
-                String worth = visited.getString("worth");
-                // Log.i("net", "user: "+usr+" lat: "+lat+" long: "+longd+" worth: "+worth);
 
-                byte[] decodedString = Base64.decode(picture, Base64.URL_SAFE);
-                Bitmap decoded = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-                selfs.add(new Selfie(usr, Double.parseDouble(lat), Double.parseDouble(longd), decoded,
-                        Integer.parseInt(worth)));
 
             }
 
