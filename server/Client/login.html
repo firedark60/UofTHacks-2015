@@ -8,7 +8,7 @@
     <title>Selfer | Login</title>
 
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
-
+<script src="/js/socket.io-client/socket.io.js"></script>
     <!--[if lte IE 8]>
         <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-old-ie-min.css">
     <![endif]-->
@@ -64,4 +64,16 @@
 </div>
 
 </body>
+
+<script>
+  var socket = io.connect('/');
+    socket.on('connect', function(msg){
+        socket.send("WE ARE CONNECTED");
+        console.log(msg);
+    });
+    socket.on('updateData', function(msg){
+        console.log(msg);
+    });
+
+</script>
 </html>

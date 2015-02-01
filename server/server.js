@@ -19,6 +19,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 server.listen(3000);
 
+
 RADIUS = 10;
 
 function measure(lat1, lon1, lat2, lon2){  // generally used geo measurement function
@@ -66,11 +67,13 @@ function remove (id, region,ret) {
             //console.log("We are connected");
             var collection = db.collection('Locations.Regions.'+region);
             collection.remove({_id : id}, function(err, result){
+                console.log(result);
                 ret(!err);
             });
         }
     });
 }
+
 
 function insertIntoUsers(username, id, Visited, ret){
     MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
@@ -125,14 +128,19 @@ function getNearestTargets(lat, long, region, ret){
                     for (var i = 0; i < len; i++){
                         VisitedRegionObject = docs[i].Visited;
                         dist = measure(lat, long, VisitedRegionObject.location[0], VisitedRegionObject.location[1]);
-                        returnList.push(dist);
-                        container[dist] = docs[i];
+                            returnList.push(dist);
+                            container[dist] = docs[i];
+                        
+                        
                     }
                     returnList.sort();
-                    max = returnList.length > 6 ? 6 : returnList.length;
+                    var max = 0; 
+                    if (returnList)
+                        max = returnList.length > 6 ? 6 : returnList.length;
                     returnList = returnList.slice(0, max);
 
                     for (var i = 0; i < max; i++){
+                        //console.log(returnList[i]);
                         retContainer[returnList[i]] = container[returnList[i]];
                     }
                     ret(retContainer);
@@ -155,14 +163,16 @@ function checkLocation (clat, clong, region, ret) {
                     ret(null);
                 }
                 else {
+                    returnList = [];
                     for (var i = 0; i < len; i++){
                         var VisitedRegionObject = docs[i].Visited;
-                        if (measure(clat, clong, VisitedRegionObject.location[0], VisitedRegionObject.location[1]) < RADIUS){
-                            //console.log("return a good value");
-                            ret(docs[i]);
+                        var dist = measure(clat, clong, VisitedRegionObject.location[0], VisitedRegionObject.location[1]);
+                        if (dist < RADIUS){
+                            docs[i].Visited.worth+=1;
+                            returnList.push(docs[i]);
                         }
                     }
-                    ret(null);
+                    ret(returnList);
                 }
             });
         }
@@ -210,6 +220,7 @@ app.post('/login', function(req, res){
 });
 
 app.post('/updateNearest', function(req, res){
+    io.sockets.emit('updateData', { receivers: 'everyone'});
     res.statusCode = 200;
     req.body = (req.body.body.split(","));
     //console.log(req.body);
@@ -221,8 +232,9 @@ app.post('/updateNearest', function(req, res){
     //console.log(long);
     getCity(lat, long, function(region){
         getNearestTargets(lat, long, region, function(dict){
+            //console.log(Object.keys(dict));
             returnStringWithInfoOnEverything = JSON.stringify(dict);
-            console.log(returnStringWithInfoOnEverything);
+            //console.log(returnStringWithInfoOnEverything);
             res.write(returnStringWithInfoOnEverything);
             res.end();
         });
@@ -254,13 +266,19 @@ app.post('/pictureCapture', function(req, res){
         else {
             checkLocation(lat, long, region, function(currentCapture){
                 //console.log(currentCapture);
-                if (currentCapture != null){ // Do this call and the next call concurrently!!!!!! (They do NOT conflict)
-                    remove(currentCapture._id, region, function(success){
+                oldPoints = 0;
+                if (currentCapture.length != 0){ // Do this call and the next call concurrently!!!!!! (They do NOT conflict)
+                    var i = 0;
+                    for (; i < currentCapture.length; i+=1){
+                        oldPoints += currentCapture[i].Visited.worth;
+                        remove(currentCapture[i]._id, region, function(success){
                         if (!success) console.log("Removing the old dude from Locations.Regions.region didn't go too well");
-                    });
-                    removeByUsername(currentCapture._id, currentCapture.Username, region,function(success){
+                        });
+                        removeByUsername(currentCapture[i]._id, currentCapture[i].Username, region,function(success){
                        if (!success) console.log("Removing the old dudes PlacesCurrentlyClaimed value didn't go too well ;c"); 
-                    });
+                        });
+
+                    }
                     
                 }
                 var JSON_DOC = {
@@ -268,7 +286,7 @@ app.post('/pictureCapture', function(req, res){
                     Visited  : {
                         picture : pic, 
                         location : [lat, long],
-                        worth : 1
+                        worth : oldPoints
                     }
                 };
                 insertIntoLocation(region,JSON_DOC, function(id){
@@ -277,7 +295,7 @@ app.post('/pictureCapture', function(req, res){
                     Visited  = {
                         picture : pic, 
                         location : [lat, long],
-                        worth : 1
+                        worth : oldPoints
                     };
                     insertIntoUsers(username, id, Visited, function(result){
                     });
@@ -288,3 +306,16 @@ app.post('/pictureCapture', function(req, res){
     res.end();
 });
 
+io.on('connection', function (socket){
+    socket.on('message', function(data) {
+        socket.join("");
+        console.log(data);
+    });
+    socket.send("what");
+    
+    
+    
+    
+});
+
+    
