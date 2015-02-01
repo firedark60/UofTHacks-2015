@@ -143,15 +143,27 @@
   }
   startTime();
 
-  function httpGet(theUrl)
-  {
-    var xmlHttp = null;
-
-    xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", theUrl, false );
-    xmlHttp.send( null );
-    return JSON.parse(xmlhttp.responseText);
-  }
+  var getJSON = function(url, successHandler, errorHandler) {
+  var xhr = typeof XMLHttpRequest != 'undefined'
+    ? new XMLHttpRequest()
+    : new ActiveXObject('Microsoft.XMLHTTP');
+  xhr.open('get', url, true);
+  xhr.onreadystatechange = function() {
+    var status;
+    var data;
+    // http://xhr.spec.whatwg.org/#dom-xmlhttprequest-readystate
+    if (xhr.readyState == 4) { // `DONE`
+      status = xhr.status;
+      if (status == 200) {
+        data = JSON.parse(xhr.responseText);
+        successHandler && successHandler(data);
+      } else {
+        errorHandler && errorHandler(status);
+      }
+    }
+    };
+    xhr.send();
+  };
 
   var socket = io.connect('/');
   socket.on('connect', function(msg){
@@ -164,8 +176,12 @@
       var location = data.Location;
 
       var li_new = document.createElement('li');
-      var json_data = httpGet('http://uifaces.com/api/v1/random');
-      var img_url = json_data.image_urls.normal;
+      getJSON('https://mathiasbynens.be/demo/ip', function(data) {
+        console.log(data.image_urls.normal);
+        var img_url = data.image_urls.normal;
+      }, function(status) {
+        console.log("error with request");
+      });
 
       li_new.innerHTML = '<span class="username">' + username + '</span>\
       <span class="location">' + location + '</span>\
