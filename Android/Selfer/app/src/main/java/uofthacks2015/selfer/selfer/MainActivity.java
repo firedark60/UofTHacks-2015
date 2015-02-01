@@ -217,7 +217,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
-        points += temp;
+        points += temp + 1;
         done = true;
 
     }
