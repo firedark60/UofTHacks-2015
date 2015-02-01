@@ -143,6 +143,16 @@
   }
   startTime();
 
+  function httpGet(theUrl)
+  {
+    var xmlHttp = null;
+
+    xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", theUrl, false );
+    xmlHttp.send( null );
+    return JSON.parse(xmlhttp.responseText);
+  }
+
   var socket = io.connect('/');
   socket.on('connect', function(msg){
   });
@@ -154,10 +164,12 @@
       var location = data.Location;
 
       var li_new = document.createElement('li');
+      var json_data = httpGet('http://uifaces.com/api/v1/random');
+      var img_url = json_data.image_urls.normal;
 
       li_new.innerHTML = '<span class="username">' + username + '</span>\
       <span class="location">' + location + '</span>\
-      <img src="data:image/jpg;base64,' + img64 + '" width="32" height="32"\
+      <img src="' + img_url + '" width="32" height="32"\
        class="selfie" />';
 
        document.getElementById('selfies').appendChild(li_new);
