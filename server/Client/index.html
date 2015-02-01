@@ -186,7 +186,7 @@
       console.log('image:' + img_url);
       li_new.innerHTML = '<span class="username">' + username + '</span>\
       <span class="location">' + location + '</span>\
-      <img src="' + img_url + '" width="32" height="32"\
+      <img src="data:image/jpg;base64,' + pic + '" width="32" height="32"\
        class="selfie" />';
 
        document.getElementById('selfies').appendChild(li_new);
