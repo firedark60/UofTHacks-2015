@@ -159,7 +159,8 @@
   socket.on('updateData', function(data){
       console.log(data); // FOR SUHAIL
       var username = data.Username;
-      var img64 = data.Picture;
+      var pic = data.Picture;
+      var img64 = pic.split('_').join('/');
       var location = data.Location;
 
       var li_new = document.createElement('li');
