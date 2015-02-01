@@ -119,18 +119,18 @@ h1,h2,h3,h4,h5,h6,p,a,li { font-family: 'Lato'; }
   padding-top: 140px;
 }
 
-#hero ul {
+#hero ul.list {
   list-style-type: none;
   margin: 0;
   padding: 0;
   padding-top: 40px;
 }
 
-#hero ul li {
+#hero ul.list li {
   padding: 10px 0;
 }
 
-#hero ul li:before {
+#hero ul.list li:before {
   content: attr(data-num);
   display: inline-block;
   width: 32px;
@@ -144,7 +144,60 @@ h1,h2,h3,h4,h5,h6,p,a,li { font-family: 'Lato'; }
   margin-right: 15px;
 }
 
+a.andriod {
+  display: inline-block;
+  padding: 20px;
+  background-color: rgba(0,0,0,0.5);
+  color: #fff;
+}
+
+#selfies {
+  list-style-type: none;
+  z-index: 4;
+  position: absolute;
+  top: 137px;
+  left: 40px;
+  width: 220px;
+  padding: 0;
+  margin: 0;
+}
+
+#selfies li {
+  width: 220px;
+  height: 45px;
+  background-color: #fff;
+  margin-top: 10px;
+  box-shadow: 0px 2px 0px 0px #E9EDF0;
+  border-radius: 3px;
+}
+
+#selfies li .username {
+  font-size: 12px;
+  color: #666666;
+  line-height: 45px;
+  padding-left: 10px;
+}
+
+#selfies li img.selfie {
+  border-radius: 16px;
+}
+
+#selfies li:first-child {
+  margin-top: 0;
+}
+
 /* PHONE */
+
+#time {
+  display: block;
+  position: absolute;
+  top: 79px;
+  left: 0;
+  font-size: 9px;
+  font-weight: 100;
+  width: 100%;
+  text-align: center;
+}
 
 .phone {
   position: relative;

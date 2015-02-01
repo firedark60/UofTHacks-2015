@@ -37,19 +37,31 @@
       <div class="inset">
         <h1>Crossing paths without crossing</h1>
         <h2>Selfer makes selfies an interactive experience</h2>
-        <ul>
+        <ul class="list">
           <li data-num="1">Discover new locations &#38; unlock hidden selfies</li>
           <li data-num="2">Gain points for holding locations</li>
           <li data-num="3">Unlock achievements and compete against friends</li>
 		   </ul>
-<h1><img width = "35%" height = "35%"  align = "center" src="img/android.png"></img></h1>
-      </div> 
+       <a href="#" class="android">Download for Android</a>
+      </div>
     </div>
     <div class="pure-u-1 pure-u-lg-1-2 pure-u-md-10-24">
       <div class="phone">
         <div class="screen">
-          <img src="img/screen-2@2x.png" width="375" height="667" />
+          <img src="img/screen-blank@2x.png" width="375" height="667" />
         </div>
+        <div id="time"></div>
+        <ul id="selfies">
+          <li>
+            <span class="username">ElonMusk</span>
+            <img src="img/Suhail.jpg" width="32" height="32" class="selfie">
+          </li>
+          <li>Text</li>
+          <li>Test</li>
+          <li>Text</li>
+          <li>Test</li>
+          <li>Text</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -103,6 +115,36 @@
     </div>
   </div>
 </div>
+
+<script>
+  function checkTime(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+  }
+
+  function startTime() {
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    m = checkTime(m);
+    var hours = (h+24-2)%24;
+    var mid='AM';
+    if(hours==0){ //At 00 hours we need to show 12 am
+      hours=12;
+    }
+    else if(hours>12){
+      hours=hours%12;
+    mid='PM';
+    }
+    document.getElementById('time').innerHTML = h + ":" + m + " " + mid;
+    t = setTimeout(function () {
+        startTime()
+    }, 500);
+  }
+  startTime();
+</script>
 
 </body>
 </html>
