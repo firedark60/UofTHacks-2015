@@ -158,8 +158,10 @@ a.andriod {
   top: 137px;
   left: 40px;
   width: 220px;
+  height: 330px;
   padding: 0;
   margin: 0;
+  overflow: scroll;
 }
 
 #selfies li {
@@ -178,8 +180,19 @@ a.andriod {
   padding-left: 10px;
 }
 
+#selfies li .location {
+  font-weight: 500;
+  font-size: 8px;
+  color: #999999;
+  line-height: 45px;
+}
+
 #selfies li img.selfie {
+  position: relative;
+  top: 6px;
+  right: 10px;
   border-radius: 16px;
+  float: right;
 }
 
 #selfies li:first-child {
