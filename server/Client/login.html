@@ -1,144 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
-    <title>Selfer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="assets/css/bootstrap.css" media="screen">
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/css/bootswatch.min.css">
-	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic' rel='stylesheet' type='text/css'>
-	<script src="assets/js/init.js"></script>
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="./bower_components/html5shiv/dist/html5shiv.js"></script>
-      <script src="./bower_components/respond/dest/respond.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Selfer App developed during UofT Hacks 2015">
+
+    <title>Selfer | Login</title>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-old-ie-min.css">
     <![endif]-->
-    <script>
+    <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
+    <!--<![endif]-->
 
-     var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-23019901-1']);
-      _gaq.push(['_setDomainName', "bootswatch.com"]);
-        _gaq.push(['_setAllowLinker', true]);
-      _gaq.push(['_trackPageview']);
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700' rel='stylesheet' type='text/css'>
 
-     (function() {
-       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-     })();
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
 
-    </script>
-	<style type="text/css">
-		
-white {
-    color: 	#FFFFFF;
+<div id="header">
+  <a href="index.html">Selfer <div class="logo"></div></a>
 
-	font-family: ‘Metrophobic’, Arial, serif; font-weight: 400; 
-}
-h1 { font-family: ‘Metrophobic’, Arial, serif; font-weight: 400; }
-black {
-    color: #000000;
-}
-header {
-    width: 640px;
-    margin-left: -10px;
-    margin-top: -10px;
-}
-section.container {
-    background: #fff;
-    width: 620px;
-    margin: auto;
-    -moz-border-radius: 10px;
-    border-radius: 50px;
-    padding: 10px;
-    box-shadow: 0px 0px 20px #888;
-}
-section.body {
-    margin-top:10px;
-}
-p {
-    padding: 0px 50px;
-}
-div4 {
-    position: absolute;
-    left: 100px;
-    top: 250px;
-}
-pleft {
-padding: 10px 0px;}
-	</style>
-  </head>
-  <body id="home" background =  "assets/img/bg1.jpg" >
-    <div class="navbar navbar-default navbar-fixed-top navbar-transparent">
-      <div class="container">
-        <div class="navbar-header">
-          <a href="index.html" class="navbar-brand">SELFER</a>
-          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-        </div>
-        <div class="navbar-collapse collapse" id="navbar-main">
-          <ul class="nav navbar-nav">
-            <li>
-              <a href="achievements.html">Achievements</a>
-            </li>
-          </ul>
-
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="login.html" target="#">Login</a></li>
-			
-            <li><a href="signup.html" target="_blank">Sign Up</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-<div>
-<div4 class="col-lg-5 ">
- <form class="form-horizontal container" name = "login" method="post" action = "/login" >
-      <div class="form-group">
-        <label for="inputEmail" class="col-lg-2 control-label">Username</label>
-        <div class="col-lg-3">
-          <input class="form-control" type="text" name="username" placeholder="Username" >
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="inputEmail" class="col-lg-2 control-label">Password</label>
-        <div class="col-lg-3">
-          <input class="form-control" type="password" name="password" placeholder="Password">
-        </div>
-      </div>
-  <div class="col-lg-10 col-lg-offset-2">
-    <br />
-    <button type="submit" name = "login"  value="login"  class="btn btn-lg btn-primary" >Log In</button> 
-	</form>
+  <ul>
+    <li><a href="login.html">Login</a></li>
+  </ul>
 </div>
-</div4>
-    <script>
-	$(document).ready(function(){
-   // cache the window object
-   $window = $(window);
- 
-   $('section[data-type="background"]').each(function(){
-     // declare the variable to affect the defined data-type
-     var $scroll = $(this);
-                     
-      $(window).scroll(function() {
-        // HTML5 proves useful for helping with creating JS functions!
-        // also, negative value because we're scrolling upwards                            
-        var yPos = -($window.scrollTop() / $scroll.data('speed'));
-         
-        // background position
-        var coords = '50% '+ yPos + 'px';
- 
-        // move the background
-        $scroll.css({ backgroundPosition: coords });   
-      }); // end window scroll
-   });  // end section function
-}); // close out script
-      !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-    </script>
-  </body>
+
+<div id="hero">
+  <div class="pure-g container">
+    <div class="pure-u-1">
+        <h1>Login</h1>
+        <h2>If you would like to create an account, you can <a href="register.html">register for one</a></h2>
+        <form class="pure-form pure-form-stacked" name="login" method="post" action="/login">
+          <fieldset>
+              <label for="username">Username</label>
+              <input id="username" type="text" placeholder="Username" name="username">
+
+              <label for="password">Password</label>
+              <input id="password" type="password" placeholder="Password" name="password">
+
+              <label for="remember" class="pure-checkbox">
+                  <input id="remember" type="checkbox"> Remember me
+              </label>
+
+              <button type="submit" class="pure-button">Sign in</button>
+          </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="footer">
+  <div class="pure-g container">
+    <div class="pure-u-1">
+      <p>Copyright &copy; 2015 | Selfer</p>
+    </div>
+  </div>
+</div>
+
+</body>
 </html>

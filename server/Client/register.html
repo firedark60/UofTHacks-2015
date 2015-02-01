@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Selfer App developed during UofT Hacks 2015">
+
+    <title>Selfer | Register</title>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-old-ie-min.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
+    <!--<![endif]-->
+
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<div id="header">
+  <a href="index.html">Selfer <div class="logo"></div></a>
+
+  <ul>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</div>
+
+<div id="hero">
+  <div class="pure-g container">
+    <div class="pure-u-1">
+        <h1>Register</h1>
+        <h2>Create a Selfer account below</h2>
+        <form class="pure-form pure-form-stacked" name="register" method="post" action="/register">
+          <fieldset>
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="Email" name="email">
+
+              <label for="username">Username</label>
+              <input id="username" type="text" placeholder="Username" name="username">
+
+              <label for="password">Password</label>
+              <input id="password" type="password" placeholder="Password" name="password">
+
+              <label for="terms" class="pure-checkbox">
+                  <input id="terms" type="checkbox"> I agree to the terms
+              </label>
+
+              <button type="submit" class="pure-button">Register</button>
+          </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="footer">
+  <div class="pure-g container">
+    <div class="pure-u-1">
+      <p>Copyright &copy; 2015 | Selfer</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
