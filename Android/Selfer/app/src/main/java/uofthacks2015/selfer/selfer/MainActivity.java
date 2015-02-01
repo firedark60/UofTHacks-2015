@@ -76,9 +76,9 @@ class MySimpleArrayAdapter extends ArrayAdapter<Selfie> {
 
 public class MainActivity extends ActionBarActivity implements LocationListener{
 
-    public static String PICTURE_CAP_URL = "http://4d2380e3.ngrok.com/pictureCapture";
-    public static String PICTURE_GET_URL = "http://4d2380e3.ngrok.com/updateNearest";
-    public static int MAX_TRIES = 3000;
+    public static String PICTURE_CAP_URL = "http://85babfa.ngrok.com/pictureCapture";
+    public static String PICTURE_GET_URL = "http://85babfa.ngrok.com/updateNearest";
+    public static int MAX_TRIES = 500;
 
     LocationManager locationMan;
     ListView lv;
@@ -194,16 +194,18 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
             request.addHeader("content-type", "application/x-www-form-urlencoded");
             request.setEntity(params);
             HttpResponse response = httpClient.execute(request);
-            done = true;
 
             points++; // TODO points should be handled by the sever.
             updatePoints();
             // handle response here...
         }catch (Exception ex) {
             // handle exception here:
+            Log.d("net ", "didn't work");
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
+
+        done = true;
 
     }
 
@@ -287,12 +289,12 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
 
 
             // TODO send this selfie to the sever and then get the list back.
+            done = false;
             Thread thread = new Thread(){
                 public void run(){
                     httpPostToServer(imageBitmap); // TODO
                 }
             };
-            done = false;
             thread.start();
             int tries = 0;
             while (!done || tries < MAX_TRIES && (latitude == 0 || longitude == 0)){
@@ -302,12 +304,12 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
                 // TODO Internet screwed up.
             }
 
+            done = false;
             Thread thread2 = new Thread(){
                 public void run(){
                     selfieList = getSelfies(); // TODO
                 }
             };
-            done = false;
             thread2.start();
             tries = 0;
             while (!done || tries < MAX_TRIES && (latitude == 0 || longitude == 0)){
