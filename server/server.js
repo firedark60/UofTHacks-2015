@@ -36,7 +36,7 @@ function measure(lat1, lon1, lat2, lon2){  // generally used geo measurement fun
 function readByUsername (username, ret) {
     MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
         if(!err) {
-            console.log("We are connected");
+            //console.log("We are connected");
             var collection = db.collection('Users');
             collection.findOne({Username : username}, function(err, item){
                 if (!err)
@@ -63,7 +63,7 @@ function userExists (username, ret) {
 function remove (id, region,ret) {
     MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
         if(!err) {
-            console.log("We are connected");
+            //console.log("We are connected");
             var collection = db.collection('Locations.Regions.'+region);
             collection.remove({_id : id}, function(err, result){
                 ret(!err);
@@ -89,7 +89,8 @@ function insertIntoLocation (region, record, ret) {
         if(!err) {
             var collection = db.collection('Locations.Regions.'+region);
             collection.insert(record, function(err, result){
-                db.close();
+                //console.log("RESULTTT");
+                //console.log(result);
                 ret(result[0]._id);
             });
         }
@@ -99,7 +100,7 @@ function insertIntoLocation (region, record, ret) {
 function removeByUsername (id, username, region,ret) {
     MongoClient.connect("mongodb://localhost:27017/Selfer", function(err, db) {
         if(!err) {
-            console.log("We are connected");
+            //console.log("We are connected");
             var collection = db.collection('Locations.Regions.'+region);
             collection.update({Username : username}, {$pullAll : {'PlacesCurrentlyClaimed' : [id]}},function(err, item){
                 ret(!err);
@@ -155,12 +156,13 @@ function checkLocation (clat, clong, region, ret) {
                 }
                 else {
                     for (var i = 0; i < len; i++){
-                        VisitedRegionObject = docs[i].Visited;
+                        var VisitedRegionObject = docs[i].Visited;
                         if (measure(clat, clong, VisitedRegionObject.location[0], VisitedRegionObject.location[1]) < RADIUS){
+                            //console.log("return a good value");
                             ret(docs[i]);
                         }
-                        else ret(null);
                     }
+                    ret(null);
                 }
             });
         }
@@ -181,19 +183,19 @@ function getCity(lat, long, ret ){
 }
 
 app.post('/login', function(req, res){
-    console.log(req.body);
+    //console.log(req.body);
     var username = req.body.username;
     userExists (username, function(result){
         if (result === 1){
             readByUsername(username, function(result){
                 if (result != null){  
-                    console.log(result.password);
-                    console.log(req.body.password);
+                    //console.log(result.password);
+                    //console.log(req.body.password);
                     if (result.password == req.body.password){
                         req.session.user = username;    
                         //req.session.userDetails = result;
                         res.statusCode = 200;
-                        console.log("you're in");
+                        //console.log("you're in");
                         res.redirect("/main.html");
                     }
                 }
@@ -210,13 +212,13 @@ app.post('/login', function(req, res){
 app.post('/updateNearest', function(req, res){
     res.statusCode = 200;
     req.body = (req.body.body.split(","));
-    console.log(req.body);
+    //console.log(req.body);
     var latString = (req.body[0].split(":")[1]);
     var lat = parseFloat(latString.substring(1, latString.length-1));
     var longString = (req.body[1].split(":")[1]);
     var long = parseFloat(longString.substring(1, longString.length-1));
-    console.log(lat);
-    console.log(long);
+    //console.log(lat);
+    //console.log(long);
     getCity(lat, long, function(region){
         getNearestTargets(lat, long, region, function(dict){
             returnStringWithInfoOnEverything = JSON.stringify(dict);
@@ -231,7 +233,7 @@ app.post('/updateNearest', function(req, res){
 app.post('/pictureCapture', function(req, res){
     res.statusCode = 200;
     req.body = (req.body.body.split(","));
-    console.log(req.body);
+    //console.log(req.body);
     var latString = (req.body[0].split(":")[1]);
     var lat = parseFloat(latString.substring(1, latString.length-1));
     var longString = (req.body[1].split(":")[1]);
@@ -240,17 +242,18 @@ app.post('/pictureCapture', function(req, res){
     var username = (usernameString.substring(1, usernameString.length-1));
     var pictureString = (req.body[3].split(":")[1]);
     var pic = (pictureString.substring(1, pictureString.length-1));
-    console.log(lat);
-    console.log(long);
-    console.log(username);
-    console.log(pic);
+    //console.log(lat);
+    //console.log(long);
+    //console.log(username);
+    //console.log("pic shows here but it's too big");
     getCity(lat, long, function(region){
-        console.log(region);
+        //console.log(region);
         if (region == null){ // Handle this case
-            console.log("WE'RE FUCKED, DO YOU LIVE NOT EARTH???!?!");
+            //console.log("WE'RE FUCKED, DO YOU LIVE NOT EARTH???!?!");
         }
         else {
             checkLocation(lat, long, region, function(currentCapture){
+                //console.log(currentCapture);
                 if (currentCapture != null){ // Do this call and the next call concurrently!!!!!! (They do NOT conflict)
                     remove(currentCapture._id, region, function(success){
                         if (!success) console.log("Removing the old dude from Locations.Regions.region didn't go too well");
@@ -269,6 +272,8 @@ app.post('/pictureCapture', function(req, res){
                     }
                 };
                 insertIntoLocation(region,JSON_DOC, function(id){
+                    //console.log("THIS IS ID");
+                    //console.log(id);
                     Visited  = {
                         picture : pic, 
                         location : [lat, long],
@@ -283,9 +288,3 @@ app.post('/pictureCapture', function(req, res){
     res.end();
 });
 
-
-checkLocation(45,45, 'TO', function(result){
-    console.log(result._id);
-    console.log(result.Username);
-    console.log(result.Visited);
-});
