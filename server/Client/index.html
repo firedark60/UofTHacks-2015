@@ -20,6 +20,8 @@
     <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700' rel='stylesheet' type='text/css'>
 
     <link rel="stylesheet" href="css/main.css">
+
+    <script src="/js/socket.io-client/socket.io.js"></script>
 </head>
 <body>
 
@@ -42,15 +44,8 @@
           <li data-num="2">Gain points for holding locations</li>
           <li data-num="3">Unlock achievements and compete against friends</li>
 		   </ul>
-<<<<<<< HEAD
        <a href="#" class="android">Download for Android</a>
       </div>
-=======
- <form method="get" action="Selfer.apk">
-		<button type="submit" style="background-color:transparent; border-color:transparent;"><img  align = "center" widgth = "50%" height = "50%" src="img/android.png"></img></button>
-		</form>
-      </div> 
->>>>>>> 5f1b7181ddb5f29e697aceeadc17c9da502cba7c
     </div>
     <div class="pure-u-1 pure-u-lg-1-2 pure-u-md-10-24">
       <div class="phone">
@@ -151,6 +146,13 @@
     }, 500);
   }
   startTime();
+
+  var socket = io.connect('/');
+  socket.on('connect', function(msg){
+  });
+  socket.on('updateData', function(data){
+      console.log(data); // FOR SUHAIL
+  });
 </script>
 
 </body>
