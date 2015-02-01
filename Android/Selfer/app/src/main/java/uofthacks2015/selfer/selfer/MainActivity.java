@@ -54,7 +54,6 @@ class MySimpleArrayAdapter extends ArrayAdapter<Selfie> {
         super(context, R.layout.row, values);
         this.context = context;
         this.values = values;
-
     }
 
     @Override
@@ -75,7 +74,6 @@ class MySimpleArrayAdapter extends ArrayAdapter<Selfie> {
     }
 }
 
-
 public class MainActivity extends ActionBarActivity implements LocationListener{
 
     public static String PICTURE_CAP_URL = "http://4d2380e3.ngrok.com/pictureCapture";
@@ -88,7 +86,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
     public static boolean done = false;
 
     // The current users information.
-    public static String username = "Hunter";
+    public static String username = "Hunter Forsyth";
     public static int points = 0;
     public static double latitude = 0;
     public static double longitude = 0;
@@ -108,6 +106,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         super.onResume();
         locationMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 400, 1, this);
         updateListView();
+        updatePoints();
     }
 
     /* Remove the locationlistener updates when Activity is paused */
@@ -131,30 +130,33 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
             HttpResponse response = httpClient.execute(request);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-            String json = reader.readLine();
 
-            JSONObject obj = new JSONObject(json);
-            Iterator iterator = obj.keys();
-            JSONObject object1= new JSONObject();
-            if(iterator.hasNext()){
-                object1 = new JSONObject(obj.getString(iterator.next().toString()));
+            String json;
+            while ((json = reader.readLine()) != null) {
+
+                JSONObject obj = new JSONObject(json);
+                Iterator iterator = obj.keys();
+                JSONObject object1 = new JSONObject();
+                if (iterator.hasNext()) {
+                    object1 = new JSONObject(obj.getString(iterator.next().toString()));
+                }
+
+                String usr = object1.getString("Username");
+                JSONObject visited = new JSONObject(object1.getString("Visited"));
+                String picture = visited.getString("picture");
+                JSONArray coord = visited.getJSONArray("location");
+                String lat = coord.getString(0);
+                String longd = coord.getString(1);
+                String worth = visited.getString("worth");
+                // Log.i("net", "user: "+usr+" lat: "+lat+" long: "+longd+" worth: "+worth);
+
+                byte[] decodedString = Base64.decode(picture, Base64.URL_SAFE);
+                Bitmap decoded = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                selfs.add(new Selfie(usr, Double.parseDouble(lat), Double.parseDouble(longd), decoded,
+                        Integer.parseInt(worth)));
+
             }
-
-            String usr = object1.getString("Username");
-            JSONObject visited = new JSONObject(object1.getString("Visited"));
-            String picture = visited.getString("picture");
-            JSONArray coord = visited.getJSONArray("location");
-            String lat = coord.getString(0);
-            String longd = coord.getString(1);
-            String worth = visited.getString("worth");
-            // Log.i("net", "user: "+usr+" lat: "+lat+" long: "+longd+" worth: "+worth);
-
-            byte[] decodedString = Base64.decode(picture, Base64.URL_SAFE);
-            Bitmap decoded = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-            selfs.add(new Selfie(usr, Double.parseDouble(lat), Double.parseDouble(longd), decoded,
-                    Integer.parseInt(worth)));
-
 
             // handle response here...
         }catch (Exception ex) {
@@ -168,6 +170,11 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
 
         done = true;
         return selfs;
+    }
+
+    public void updatePoints(){
+        TextView unameView = (TextView)findViewById(R.id.user);
+        unameView.setText(username+"\n"+Integer.toString(points)+" pts.");
     }
 
     public void httpPostToServer(Bitmap pic){
@@ -187,7 +194,10 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
             request.addHeader("content-type", "application/x-www-form-urlencoded");
             request.setEntity(params);
             HttpResponse response = httpClient.execute(request);
+            done = true;
 
+            points++; // TODO points should be handled by the sever.
+            updatePoints();
             // handle response here...
         }catch (Exception ex) {
             // handle exception here:
@@ -204,7 +214,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         setTitle("Selfer");
 
         TextView unameView = (TextView)findViewById(R.id.user);
-        unameView.setText(username+"\n"+Integer.toString(points)+"pts.");
+        unameView.setText(username+"\n"+Integer.toString(points)+" pts.");
 
         lv = (ListView) findViewById(R.id.listView);
 
@@ -247,30 +257,6 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         updateListView();
 
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, Login_Activity.class);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 
     public void takePic(View view){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -279,6 +265,11 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
             startActivityForResult(takePictureIntent, 1);
         }
 
+    }
+
+    public void logIn(View view){
+        Intent intent = new Intent(this, Login_Activity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -294,8 +285,6 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
             Bundle extras = data.getExtras();
             final Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            // Selfie newSelfie = new Selfie(username, latitude, longitude, imageBitmap, 1);
-
 
             // TODO send this selfie to the sever and then get the list back.
             Thread thread = new Thread(){
@@ -303,7 +292,15 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
                     httpPostToServer(imageBitmap); // TODO
                 }
             };
+            done = false;
             thread.start();
+            int tries = 0;
+            while (!done || tries < MAX_TRIES && (latitude == 0 || longitude == 0)){
+                tries++;
+            }
+            if (!done){
+                // TODO Internet screwed up.
+            }
 
             Thread thread2 = new Thread(){
                 public void run(){
@@ -312,7 +309,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
             };
             done = false;
             thread2.start();
-            int tries = 0;
+            tries = 0;
             while (!done || tries < MAX_TRIES && (latitude == 0 || longitude == 0)){
                 tries++;
             }

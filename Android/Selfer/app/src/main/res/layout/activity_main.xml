@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:background="@drawable/bg1"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -10,7 +11,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/user"
         android:typeface="sans"
-        android:textSize="36dp" />
+        android:textSize="36dp"
+        android:textColor="#303030"
+        android:paddingLeft="5dp" />
 
     <ListView
         android:layout_width="wrap_content"
@@ -24,26 +27,35 @@
         android:paddingBottom="10dp" />
 
     <ImageButton
-        android:layout_width="80dp"
+        android:layout_width="140dp"
         android:layout_height="60dp"
         android:id="@+id/takePic"
         android:src="@drawable/cam"
         android:scaleType="centerInside"
         android:onClick="takePic"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/imageButton"
-        android:layout_alignRight="@+id/listView"
-        android:layout_alignEnd="@+id/listView" />
+        android:layout_centerHorizontal="true" />
 
     <ImageButton
-        android:layout_width="80dp"
+        android:layout_width="100dp"
         android:layout_height="60dp"
         android:id="@+id/imageButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:onClick="goToMap"
         android:src="@drawable/pin"
-        android:scaleType="centerInside" />
+        android:scaleType="centerInside"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/takePic"
+        android:layout_toStartOf="@+id/takePic" />
+
+    <ImageButton
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:id="@+id/imageButton2"
+        android:onClick="logIn"
+        android:layout_alignTop="@+id/takePic"
+        android:layout_toRightOf="@+id/takePic"
+        android:layout_toEndOf="@+id/takePic"
+        android:src="@drawable/user"
+        android:scaleType="fitCenter" />
 
 </RelativeLayout>

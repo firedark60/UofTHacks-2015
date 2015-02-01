@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:background="@drawable/bg2"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -9,32 +10,40 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:typeface="sans"
-        android:textSize="36dp"
+        android:textSize="42dp"
         android:id="@+id/textView"
-        android:layout_marginTop="31dp"
+        android:textColor="#EEEEEE"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:textColor="#000000" />
+        android:layout_marginTop="15dp" />
 
     <TextView
-        android:layout_width="240dp"
+        android:layout_width="290dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Herp derp this is how this app works derp herp blah blah this is a placeholder."
+        android:text="Selfer is an immersive interactive experience where players take real-life 'selfies' and compete for points.\n\n
+- Take a selfie in a new area and earn one point.\n\n
+- Take a selfie in an area where someone has already taken one and claim their points plus one.\n\n
+You can play without signing in, but doing so allows you to save achievements and stats.\n"
         android:id="@+id/textView2"
-        android:layout_marginTop="38dp"
+        android:textColor="#CCCCCC"
         android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp"
+        android:textSize="16dp" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
         android:text="Get Started"
         android:id="@+id/button"
         android:layout_marginBottom="31dp"
-        android:textSize="24dp"
+        android:textSize="18dp"
         android:onClick="getStarted"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:typeface="normal"
+        android:background="#1a237e"
+        android:textColor="#FFFFFF" />
 
 </RelativeLayout>
