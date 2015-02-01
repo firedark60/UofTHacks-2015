@@ -173,6 +173,7 @@
       var username = data.Username;
       var pic = data.Picture;
       var img64 = pic.split('_').join('/');
+      console.log('IMAGE FROM SERVER: ' + pic);
       var location = data.Location;
       var img_url = "http://lorempixel.com/32/32";
 
@@ -186,7 +187,7 @@
       console.log('image:' + img_url);
       li_new.innerHTML = '<span class="username">' + username + '</span>\
       <span class="location">' + location + '</span>\
-      <img src="data:image/jpg;base64,' + pic + '" width="32" height="32"\
+      <img src="' + img_url + '" width="32" height="32"\
        class="selfie" />';
 
        document.getElementById('selfies').appendChild(li_new);
